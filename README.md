@@ -11,6 +11,7 @@
 
 2.执行此项目后，原始提交记录将完全丢失，会自动生成以每个文件夹为单位的`Push`记录。
 
+## 运行示例：
 [ 下图为该示例分支中，执行脚本后会呈现的完整历史记录提交状态 ]
 ![image](https://github.com/Container-Zero/Branch-Pruner-Action/assets/20435019/9993aacc-2f17-464e-b667-823b4c6637df)
 
