@@ -1,0 +1,79 @@
+# Branch-Pruner | GitHub Action
+# 
+# Description: 清理选定分支的历史提交记录
+# Author: Container
+# Version: v1.0
+# Source: https://github.com/Container-Zero/Branch-Pruner-Action
+# License: MIT
+# Filename: branch_pruner_v1.0.yml
+# Copyright (c) 2023 Container
+#
+# CAUTION: 使用风险自负，清除历史记录大调操作无法撤消，请在使用之前备份您的数据。
+
+name: Branch Pruner V1.0
+
+env:
+  MASTER_BRANCH: "$(echo ${{ github.ref }} | cut -d'/' -f3)"
+  TEMP_BRANCH: "temp_77743FCC_85C1_4C4D_9A8D_B0130469B4F9"
+
+on:
+  # schedule: 
+  #   - cron: '00 23 28 * *' # 例如，每月28日23:00
+  workflow_dispatch:
+    inputs:
+      new_first_commit:
+        description: '输入要保留的历史记录数量。如5则代表仅保留最近的5次提交。'
+        required: true
+        default: '0'
+      # master_branch:
+      #   description: '输入你要清除历史提交记录的分支名称'
+      #   required: true
+      #   default: 'master'
+      # temp_branch:
+      #   description: '在清除时会创建一个临时分支用于中转，并于之后删除，输入你想要在这个过程中创建的临时分支名称，注意！严禁使用你项目中已存在的分支名！'
+      #   required: true
+      #   default: 'temp_77743FCC_85C1_4C4D_9A8D_B0130469B4F9'
+
+jobs:
+  branch-pruner-action:
+    name: Branch pruner action
+    runs-on: ubuntu-latest
+    # timeout-minutes: 8
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Enter personal information
+        run: |
+          git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com' #提交时使用的email
+          git config --global user.name 'Branch-Pruner[Action-Bot]' #提交时使用的用户名
+
+      - name: Clean history commit config # 在添加文件前进行正确的设置
+        run: |
+          git config --global core.quotepath false #强制正确显示中文
+          
+      - name: Clean history commit
+        run: | 
+          COMMIT_ID=$(git rev-parse HEAD~${{ github.event.inputs.new_first_commit }})
+          #获取主分支历史提交记录中，你要截取的目标历史记录那个点的Hash(例如你输入的inputs.new_first_commit的是5，也就是HEAD~5，此处将获取最近提交中的第五条提交的Hash)，并将其存入变量COMMIT_ID中
+          
+          git checkout --orphan ${{ github.event.inputs.temp_branch || env.TEMP_BRANCH }} "$COMMIT_ID"
+          #以主分支历史提交记录中，你要截取的目标历史记录那个点为基础，创建一个名为temp的本地分支，并将目标切换到此分支上。
+          #此时temp分支的工作区和暂存区，将与主分支历史提交记录中，你要截取的目标历史记录那个点时的内容完全一致
+          #(例如你输入的inputs.new_first_commit的是5，也就是HEAD~5，此处temp的工作区和暂存区，将和主分支最近第五次提交后的内容完全一致)
+
+          git commit -m "[ Earlier Commits Truncated ]"
+          #在temp上创建首个提交记录，将工作区和暂存区的内容进行提交，附带消息为[ Earlier Commits Truncated ]，此记录相当于重新提交了temp中的所有文件
+          #（此步骤不可省略，执行这一步才能把仓库里工作区和暂存区的内容推送到历史记录中，否则temp将为一个空分支）
+
+          git rebase --onto ${{ github.event.inputs.temp_branch || env.TEMP_BRANCH }} $COMMIT_ID ${{ github.event.inputs.master_branch || env.MASTER_BRANCH }}
+          #执行变基操作，新建一个和temp一模一样的无名临时分支
+          #将主分支历史提交记录的最近一次提交记录，到你要截取的目标历史记录那个点之间的所有记录，变基到无名临时分支上
+          #并将主分支历史记录指针指向无名临时分支中最新的提交记录上
+          #(例如你输入的inputs.new_first_commit的是5，也就是HEAD~5，这里会将主分支HEAD~5之前，即最近四条历史记录变基到无名临时分支上，此时该无名临时分支的历史记录为 1-2-3-4-$COMMIT_ID 从近到远共五条，此后将主分支历史记录指针指向无名临时分支中最新的提交记录上，也就是移动到1上)
+
+          git branch -D ${{ github.event.inputs.temp_branch || env.TEMP_BRANCH }}
+          #删除本地temp分支
+          
+          git push origin HEAD --force
+          #对主分支进行强制推送，完全覆盖git上的主分支状态
