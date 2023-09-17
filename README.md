@@ -9,7 +9,10 @@
 ## 注意事项：
 1.如果你的项目大于2G请使用 [ [v2.0](https://github.com/Container-Zero/Branch-Pruner-Action/tree/v2) ] 版本——此项目无法作用在排除历史提交后，仓库文件总体积仍然大于2G的分支上，若大于2G，脚本会报错并安全退出终止执行，不会破坏仓库现有状态（这是由于单次`Push`的缓冲区限制原因，最大为2G，无论你用`ssh`还是`http`，单次`Push`都不能大于2G，`Push`不上去自然就不会产生任何修改）。
 
-2.执行此项目后，所有保留下来的历史提交记录都将获得新的`Commit Name`、`Commit Email`、`Massage`、`Hash`、`Time`...
+2.此版本是所有版本中唯一能够选择性保留现有分支内容的版本，但是注意——执行此项目后，所有保留下来的历史提交记录都将获得新的`Commit Name`、`Commit Email`、`Massage`、`Hash`、`Time`...
+
+[ 下图为该实例分支不保留任何历史记录时，执行脚本后的提交状态 ]
+![image](https://github.com/Container-Zero/Branch-Pruner-Action/assets/20435019/b63364f2-7d68-4d1d-b32f-fdd24ae78a3f)
 
 ## 使用方法：
 1.**为了防止意外情况，请在操作前备份你的仓库，或新建一个临时仓库进行脚本实验，确保功能符合你的需求。**
