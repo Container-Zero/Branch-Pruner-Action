@@ -11,7 +11,7 @@
 
 2.此版本是所有版本中唯一能够选择性保留现有分支内容的版本，但是注意——执行此项目后，所有保留下来的历史提交记录都将获得新的`Commit Name`、`Commit Email`、`Massage`、`Hash`、`Time`...
 
-[ 下图为该示例分支选择不保留任何历史记录时，执行脚本后的历史提交记录状态 ]
+[ 下图为该示例分支选择不保留任何历史记录时，执行脚本后的全部历史提交记录状态 ]
 ![image](https://github.com/Container-Zero/Branch-Pruner-Action/assets/20435019/b63364f2-7d68-4d1d-b32f-fdd24ae78a3f)
 
 ## 使用方法：
