@@ -11,7 +11,7 @@
 
 2.执行此项目后，原始提交记录将完全丢失，会自动生成以每个文件夹为单位的`Push`记录。
 
-[ 下图为该示例分支中，执行脚本后的全部历史提交记录状态 ]
+[ 下图为该示例分支中，执行脚本后会呈现的完整历史记录提交状态 ]
 ![image](https://github.com/Container-Zero/Branch-Pruner-Action/assets/20435019/9993aacc-2f17-464e-b667-823b4c6637df)
 
 3.**再次强调，该版本不同于 [ [v1.0](https://github.com/Container-Zero/Branch-Pruner-Action/tree/v1) ] 版本，仅适用于你的仓库非常的巨大，并且你完全不需要保留任何原始历史提交记录时，才该尝试使用。除此之外的情况你应该使用 [ [v1.0](https://github.com/Container-Zero/Branch-Pruner-Action/tree/v1) ] 的版本。什么？你说这个版本还无法在你巨大的仓库执行？来试试 [ [v3.0](https://github.com/Container-Zero/Branch-Pruner-Action/tree/v3) ] 版本吧...**
